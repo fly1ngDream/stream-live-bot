@@ -1,5 +1,10 @@
 *.py[cod]
 __pycache__
+
 .env
 *.pkl
+
 Pipfile.lock
+
+inventory
+*.retry

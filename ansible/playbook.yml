@@ -1,0 +1,55 @@
+---
+- hosts: all
+  vars:
+    project_name: stream-live-bot
+    repo_name: fly1ngDream/stream-live-bot
+  tasks:
+  - name: Dependencies
+    tags: apt
+    apt: cache_valid_time=3600 name={{ packages }}
+    become: yes
+    vars:
+      packages:
+        - python3
+        - python-pip
+        - python3-pip
+        - python3-setuptools
+  - name: Install pipenv
+    tags: python
+    become: yes
+    shell: pip3 install pipenv
+    register: pipenv
+    changed_when: "'installed pipenv' in pipenv.stdout"
+  - name: Clone repo
+    tags: deploy
+    git:
+      repo: https://github.com/{{ repo_name }}
+      update: yes
+      force: yes
+      dest: ~/{{ project_name }}
+  - name: Install pipenv deps
+    shell: pipenv install
+    tags: pipenvdeps
+    args:
+      chdir: ~/{{ project_name }}
+  - name: Kill gunicorn
+    shell: pkill gunicorn
+    register: kill_gunicorn
+    changed_when: kill_gunicorn.rc == 0
+    failed_when: kill_gunicorn.rc not in [0, 1]
+  - name: Run gunicorn
+    tags: deploy
+    shell: pipenv run gunicorn -D -b 0.0.0.0 -p 8000 stream_status:app
+    args:
+      chdir: ~/{{ project_name }}
+  # - name: Kill running telegram bot
+  #   tags: deploy
+  #   shell: pkill python
+  #   register: kill_tg_bot
+  #   changed_when: kill_tg_bot.rc == 0
+  #   failed_when: kill_tg_bot.rc not in [0, 1]
+  - name: Run telegram bot
+    tags: deploy
+    shell: pipenv run python bot.py &
+    args:
+      chdir: ~/{{ project_name }}

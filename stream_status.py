@@ -1,6 +1,7 @@
 from flask import Flask, request, abort
 from bot import dispatcher, CallbackContext, read_subscribers
 from dotenv import load_dotenv
+from datetime import datetime
 
 import json
 import requests
@@ -19,7 +20,9 @@ def stream_changed():
             send_notifications(read_subscribers('subscribers_data.pkl'))
         return '', 200
     elif request.method == 'GET':
-        print(request.json)
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f'\"GET \'/stream_changed\' {now}\"')
+        return '', 200
     else:
         abort(400)
 
