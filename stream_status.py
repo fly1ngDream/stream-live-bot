@@ -1,5 +1,6 @@
 from flask import Flask, request, abort
 from bot import dispatcher, CallbackContext, read_subscribers
+from telegram.ext.dispatcher import run_async
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -26,6 +27,7 @@ def stream_changed():
     else:
         abort(400)
 
+@run_async
 def send_notifications(subscribers):
     for chat_id in subscribers:
         CallbackContext(dispatcher).bot.send_message(

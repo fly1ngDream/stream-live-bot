@@ -5,6 +5,7 @@ from telegram.ext import (
     MessageHandler,
     CallbackContext
 )
+from telegram.ext.dispatcher import run_async
 from dotenv import load_dotenv
 
 import os
@@ -16,21 +17,21 @@ import pickle
 load_dotenv()
 
 def read_subscribers(file_name):
-    with open(file_name, 'rb') as subscribers_data:
-        return pickle.load(subscribers_data)
+    if os.path.isfile(file_name):
+        with open(file_name, 'rb') as subscribers_data:
+            return pickle.load(subscribers_data)
+    else:
+        return collections.deque()
 
 def write_subscribers(subscribers, file_name):
     with open(file_name, 'wb') as subscribers_data:
-        return pickle.dump(
+        pickle.dump(
             subscribers,
             subscribers_data,
             pickle.HIGHEST_PROTOCOL,
         )
 
-if os.path.isfile('subscribers_data.pkl'):
-    subscribers = read_subscribers('subscribers_data.pkl')
-else:
-    subscribers = collections.deque()
+subscribers = read_subscribers('subscribers_data.pkl')
 
 updater = Updater(
     token=os.getenv('TELEGRAM_BOT_TOKEN'),
@@ -43,19 +44,25 @@ logging.basicConfig(
     level=logging.INFO,
 )
 
+@run_async
 def start(update, context):
     subscribers.append(update.message.chat_id)
     write_subscribers(subscribers, 'subscribers_data.pkl')
+    print(subscribers)
     context.bot.send_message(
         chat_id=update.message.chat_id,
         text='You\'ve subscribed for stream notifications.',
     )
-    print(subscribers)
 
+@run_async
 def stop(update, context):
     subscribers.remove(update.message.chat_id)
     write_subscribers(subscribers, 'subscribers_data.pkl')
     print(subscribers)
+    context.bot.send_message(
+        chat_id=update.message.chat_id,
+        text='You\'ve unsubscribed.',
+    )
 
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
