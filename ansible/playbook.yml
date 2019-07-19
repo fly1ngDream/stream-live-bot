@@ -50,6 +50,6 @@
   #   failed_when: kill_tg_bot.rc not in [0, 1]
   - name: Run telegram bot
     tags: deploy
-    shell: pipenv run python bot.py &
+    shell: pipenv run nohup python bot.py &
     args:
       chdir: ~/{{ project_name }}

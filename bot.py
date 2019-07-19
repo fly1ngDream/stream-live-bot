@@ -46,23 +46,37 @@ logging.basicConfig(
 
 @run_async
 def start(update, context):
-    subscribers.append(update.message.chat_id)
-    write_subscribers(subscribers, 'subscribers_data.pkl')
-    print(subscribers)
-    context.bot.send_message(
-        chat_id=update.message.chat_id,
-        text='You\'ve subscribed for stream notifications.',
-    )
+    chat_id = update.message.chat_id
+    if not chat_id in subscribers:
+        subscribers.append(chat_id)
+        write_subscribers(subscribers, 'subscribers_data.pkl')
+        print(subscribers)
+        context.bot.send_message(
+            chat_id=chat_id,
+            text='You\'ve subscribed for stream notifications.',
+        )
+    else:
+        context.bot.send_message(
+            chat_id=chat_id,
+            text='You are already subscribed.',
+        )
 
 @run_async
 def stop(update, context):
-    subscribers.remove(update.message.chat_id)
-    write_subscribers(subscribers, 'subscribers_data.pkl')
-    print(subscribers)
-    context.bot.send_message(
-        chat_id=update.message.chat_id,
-        text='You\'ve unsubscribed.',
-    )
+    chat_id = update.message.chat_id
+    if chat_id in subscribers:
+        subscribers.remove(chat_id)
+        write_subscribers(subscribers, 'subscribers_data.pkl')
+        print(subscribers)
+        context.bot.send_message(
+            chat_id=chat_id,
+            text='You\'ve unsubscribed.',
+        )
+    else:
+        context.bot.send_message(
+            chat_id=update.message.chat_id,
+            text='You are not subscribed.',
+        )
 
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
