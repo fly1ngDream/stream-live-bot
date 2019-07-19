@@ -27,7 +27,6 @@ def stream_changed():
     else:
         abort(400)
 
-@run_async
 def send_notifications(subscribers):
     for chat_id in subscribers:
         CallbackContext(dispatcher).bot.send_message(
