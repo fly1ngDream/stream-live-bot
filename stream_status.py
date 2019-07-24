@@ -73,5 +73,5 @@ def subscribe_for_stream_changes(username):
     )
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
     # subscribe_for_stream_changes()
+    app.run(host='0.0.0.0', port=8000)
