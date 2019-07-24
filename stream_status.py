@@ -45,7 +45,12 @@ def subscribe_for_stream_changes(username):
     }
 
     users_url = f'{api_url}/users?login={username}'
-    user_data = json.loads(requests.get(users_url).text).get('data')
+    user_data = json.loads(
+        requests.get(
+            users_url,
+            headers=headers
+        ).text
+    ).get('data')[0]
     user_id = -1
     if user_data == []:
         raise UsernameError('Invalid username')
@@ -67,5 +72,6 @@ def subscribe_for_stream_changes(username):
         headers=headers,
     )
 
-if __name__ == '__main__': app.run(host='0.0.0.0', port=8000)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8000)
     # subscribe_for_stream_changes()
