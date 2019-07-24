@@ -75,5 +75,5 @@ def subscribe_for_stream_changes(username):
     )
 
 if __name__ == '__main__':
-    subscribe_for_stream_changes(os.getenv('streamer_username'))
+    subscribe_for_stream_changes(os.getenv('STREAMER_USERNAME'))
     app.run(host='0.0.0.0', port=8000)
