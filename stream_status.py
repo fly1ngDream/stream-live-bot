@@ -18,7 +18,9 @@ def stream_changed():
     if request.method == 'POST':
         streams_data = request.get_json(force=True).get('data')
         if streams_data != []:
-            send_notifications(read_subscribers('subscribers_data.pkl'))
+            send_notifications(read_subscribers('subscribers_data.pkl'), 'Stated a stream!')
+        else:
+            send_notifications(read_subscribers('subscribers_data.pkl'), 'Finished a stream.')
         return '', 200
     elif request.method == 'GET':
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -27,11 +29,11 @@ def stream_changed():
     else:
         abort(400)
 
-def send_notifications(subscribers):
+def send_notifications(subscribers, text):
     for chat_id in subscribers:
         CallbackContext(dispatcher).bot.send_message(
             chat_id=chat_id,
-            text='Started a stream!'
+            text=text
         )
 
 
@@ -63,7 +65,7 @@ def subscribe_for_stream_changes(username):
     hub_data = {
         'hub.callback': f'http://{ip}:8000/stream_changed',
         'hub.mode': 'subscribe',
-        'hub.topic': f'https://api.twitch.tv/helix/streams?user_id={user_id}',
+        'hub.topic': f'{api_url}/streams?user_id={user_id}',
         'hub.lease_seconds': 864000,
     }
     requests.post(
