@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 
 import schedule
 import time
+import os
 
 
 load_dotenv()
