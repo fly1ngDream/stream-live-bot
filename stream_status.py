@@ -13,18 +13,30 @@ load_dotenv()
 
 app = Flask(__name__)
 
+streamer_username = os.getenv('STREAMER_USERNAME')
+
+def twitch_user_link(username):
+    return f'twitch.tv/{username}'
+
 @app.route('/stream_changed', methods=['POST', 'GET'])
 def stream_changed():
+    stream_online = False
     if request.method == 'POST':
         streams_data = request.get_json(force=True).get('data')
-        if streams_data != []:
-            send_notifications(read_subscribers('subscribers_data.pkl'), 'Stated a stream!')
-        else:
-            send_notifications(read_subscribers('subscribers_data.pkl'), 'Finished a stream.')
+        if streams_data != [] and stream_online == False:
+            stream_online = True
+            twitch_streamer_link = twitch_user_link(streamer_username)
+            send_notifications(
+                read_subscribers('subscribers_data.pkl'),
+                f'Stated a stream!\n{twitch_streamer_link}'
+            )
+        elif streams_data == []:
+            stream_online = False
+            # send_notifications(read_subscribers('subscribers_data.pkl'), 'Finished a stream.')
         return '', 200
     elif request.method == 'GET':
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print(f'\"GET \'/stream_changed\' {now}\"')
+        print(f'\"GET \'/stream_changed\' {now} {request.url}\"')
         return requests.args.get('hub.challenge'), 200
     else:
         abort(400)

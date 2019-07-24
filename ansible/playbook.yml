@@ -42,6 +42,11 @@
     shell: pipenv run gunicorn -D -b 0.0.0.0 -p 8000 stream_status:app
     args:
       chdir: ~/{{ project_name }}
+  - name: Subcribe and schedule subscription renewal
+    tags: deploy
+    shell: pipenv run nohup python schedule_subscription_renewal.py &
+    args:
+      chdir: ~/{{ project_name }}
   # - name: Kill running telegram bot
   #   tags: deploy
   #   shell: pkill python
