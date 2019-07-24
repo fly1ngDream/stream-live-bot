@@ -11,9 +11,8 @@ load_dotenv()
 streamer_username = os.getenv('STREAMER_USERNAME')
 
 schedule.every(8).days.do(
-    subscribe_for_stream_changes(
-        streamer_username
-    )
+    subscribe_for_stream_changes,
+    streamer_username
 )
 
 if __name__ == '__main__':
