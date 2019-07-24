@@ -25,7 +25,7 @@ def stream_changed():
     elif request.method == 'GET':
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print(f'\"GET \'/stream_changed\' {now}\"')
-        return '', 200
+        return requests.args.get('hub.challenge'), 200
     else:
         abort(400)
 
@@ -75,5 +75,5 @@ def subscribe_for_stream_changes(username):
     )
 
 if __name__ == '__main__':
-    # subscribe_for_stream_changes()
+    subscribe_for_stream_changes(os.getenv('streamer_username'))
     app.run(host='0.0.0.0', port=8000)
