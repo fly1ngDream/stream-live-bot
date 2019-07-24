@@ -34,23 +34,38 @@ def send_notifications(subscribers):
             text='Started a stream!'
         )
 
-def subscribe_for_stream_changes(user_id):
-    url = 'https://api.twitch.tv/helix/webhooks/hub'
+
+class UsernameError(Exception):
+    pass
+
+def subscribe_for_stream_changes(username):
+    api_url = 'https://api.twitch.tv/helix'
+    headers = {
+        'Client-ID': os.getenv('TWITCH_CLIENT_ID'),
+    }
+
+    users_url = f'{api_url}/users?login={username}'
+    user_data = json.loads(requests.get(users_url).text).get('data')
+    user_id = -1
+    if user_data == []:
+        raise UsernameError('Invalid username')
+    else:
+        user_id = int(user_data.get('id'))
+
+
+    webhooks_hub_url = f'{api_url}/webhooks/hub'
     ip = os.getenv('IP')
     hub_data = {
         'hub.callback': f'http://{ip}:8000/stream_changed',
         'hub.mode': 'subscribe',
         'hub.topic': f'https://api.twitch.tv/helix/streams?user_id={user_id}',
-    }
-    headers = {
-        'Client-ID': os.getenv('TWITCH_CLIENT_ID'),
+        'hub.lease_seconds': 864000,
     }
     requests.post(
-        url,
+        webhooks_hub_url,
         json=hub_data,
         headers=headers,
     )
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+if __name__ == '__main__': app.run(host='0.0.0.0', port=8000)
     # subscribe_for_stream_changes()
