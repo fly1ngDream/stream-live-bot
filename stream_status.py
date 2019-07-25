@@ -39,7 +39,7 @@ def stream_changed():
     elif request.method == 'GET':
         now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         print(f'\"GET \'/stream_changed\' {now} {request.url}\"')
-        return requests.args.get('hub.challenge'), 200
+        return request.args.get('hub.challenge'), 200
     else:
         abort(400)
 
