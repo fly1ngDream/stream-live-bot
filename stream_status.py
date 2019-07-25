@@ -1,6 +1,7 @@
 from flask import Flask, request, abort
 from bot import dispatcher, CallbackContext, read_subscribers
 from telegram.ext.dispatcher import run_async
+from telegram.error import Unauthorized
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -45,10 +46,13 @@ def stream_changed():
 
 def send_notifications(subscribers, text):
     for chat_id in subscribers:
-        CallbackContext(dispatcher).bot.send_message(
-            chat_id=chat_id,
-            text=text
-        )
+        try:
+            CallbackContext(dispatcher).bot.send_message(
+                chat_id=chat_id,
+                text=text
+            )
+        except Unauthorized as e:
+            pass
 
 
 class UsernameError(Exception):
