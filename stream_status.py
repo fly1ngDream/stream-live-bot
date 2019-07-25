@@ -15,12 +15,14 @@ app = Flask(__name__)
 
 streamer_username = os.getenv('STREAMER_USERNAME')
 
+stream_online = False
+
 def twitch_user_link(username):
     return f'twitch.tv/{username}'
 
 @app.route('/stream_changed', methods=['POST', 'GET'])
 def stream_changed():
-    stream_online = False
+    global stream_online
     if request.method == 'POST':
         streams_data = request.get_json(force=True).get('data')
         if streams_data != [] and stream_online == False:
