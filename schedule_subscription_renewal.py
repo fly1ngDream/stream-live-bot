@@ -24,8 +24,5 @@ def subscribe_and_schedule_renewal():
         schedule.run_pending()
         time.sleep(60)
 
-# Gunicorn app object
-app = subscribe_and_schedule_renewal
-
 if __name__ == '__main__':
     subscribe_and_schedule_renewal()
