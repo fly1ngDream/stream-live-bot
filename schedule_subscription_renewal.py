@@ -2,7 +2,6 @@ from dotenv import load_dotenv
 from twitch_api import TwitchAPI
 
 import schedule
-import time
 import os
 
 
@@ -22,6 +21,6 @@ if __name__ == '__main__':
         tw_api.subscribe_for_stream_changes(streamer_username)
         while True:
             schedule.run_pending()
-            time.sleep(60)
+            sleep(60)
     except KeyboardInterrupt:
         pass
