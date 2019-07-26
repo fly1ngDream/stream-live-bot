@@ -35,14 +35,14 @@ class TwitchAPI(DefaultRepresentationMixin):
                 users_url,
                 headers=headers
             ).text
-        ).get('data')[0]
+        ).get('data')
 
         user_id = -1
 
         if user_data == []:
             raise UsernameError('Invalid username')
         else:
-            user_id = int(user_data.get('id'))
+            user_id = int(user_data[0].get('id'))
             return user_id
 
     def is_stream_online(self, username):
