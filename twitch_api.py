@@ -30,7 +30,7 @@ class TwitchAPI(DefaultRepresentationMixin):
             'Client-ID': self.client_id,
         }
         users_url = f'{self.url}/users?login={username}'
-        user_data = json.loads(
+        users_data = json.loads(
             requests.get(
                 users_url,
                 headers=headers
@@ -39,10 +39,11 @@ class TwitchAPI(DefaultRepresentationMixin):
 
         user_id = -1
 
-        if user_data == []:
+        if users_data == []:
             raise UsernameError('Invalid username')
         else:
-            user_id = int(user_data[0].get('id'))
+            user_data = users_data[0]
+            user_id = int(user_data.get('id'))
             return user_id
 
     def is_stream_online(self, username):
