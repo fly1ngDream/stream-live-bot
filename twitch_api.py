@@ -81,7 +81,7 @@ class TwitchAPI(DefaultRepresentationMixin):
         hub_data = {
             'hub.callback': f'http://{ip}:8000/stream_changed',
             'hub.mode': 'subscribe',
-            'hub.topic': f'{api_url}/streams?user_id={user_id}',
+            'hub.topic': f'{self.url}/streams?user_id={user_id}',
             'hub.lease_seconds': 864000,
         }
         requests.post(
