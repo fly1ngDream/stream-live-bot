@@ -1,4 +1,3 @@
-from stream_status import subscribe_for_stream_changes
 from dotenv import load_dotenv
 from twitch_api import TwitchAPI
 

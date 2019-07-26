@@ -11,7 +11,7 @@ class TwitchAPI(DefaultRepresentationMixin):
     url = default_getter('url')
     client_id = default_property('client_id')
 
-    def __init__(client_id):
+    def __init__(self, client_id):
         self.client_id = client_id
 
     def get_user_id_by_username(self, username):
