@@ -47,7 +47,7 @@
     args:
       chdir: ~/{{ project_name }}
   - name: Kill schedule_subscription_renewal process
-    shell: pm2 stop schedule_subscription_renewal
+    shell: pm2 delete schedule_subscription_renewal
     register: kill_subs_renewal
     changed_when: kill_subs_renewal.rc == 0
     failed_when: kill_subs_renewal.rc not in [0, 1]
@@ -57,7 +57,7 @@
     args:
       chdir: ~/{{ project_name }}
   - name: Kill telegram bot
-    shell: pm2 stop bot
+    shell: pm2 delete bot
     register: bot
     changed_when: bot.rc == 0
     failed_when: bot.rc not in [0, 1]
