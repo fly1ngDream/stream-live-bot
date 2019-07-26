@@ -1,6 +1,12 @@
 from class_utils import default_property, default_getter, DefaultRepresentationMixin
+from dotenv import load_dotenv
 
 import json
+import requests
+import os
+
+
+load_dotenv()
 
 
 class UsernameError(Exception):
