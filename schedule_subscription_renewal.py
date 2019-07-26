@@ -1,5 +1,5 @@
-from dotenv import load_dotenv
 from twitch_api import TwitchAPI
+from dotenv import load_dotenv
 
 import schedule
 import time
@@ -17,9 +17,15 @@ schedule.every(8).days.do(
     streamer_username
 )
 
+def sleep(seconds):
+    for i in range(seconds):
+        try:
+            time.sleep(1)
+        except KeyboardInterrupt:
+            continue
+
 if __name__ == '__main__':
     tw_api.subscribe_for_stream_changes(streamer_username)
-    print('Pending for the next subscription time...')
     while True:
         schedule.run_pending()
-        time.sleep(1)
+        sleep(60)
