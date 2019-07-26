@@ -1,5 +1,7 @@
 from class_utils import default_property, default_getter, DefaultRepresentationMixin
 
+import json
+
 
 class UsernameError(Exception):
     pass
