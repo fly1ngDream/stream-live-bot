@@ -17,11 +17,8 @@ schedule.every(8).days.do(
     streamer_username
 )
 
-def subscribe_and_schedule_renewal():
+if __name__ == '__main__':
     tw_api.subscribe_for_stream_changes(streamer_username)
     while True:
         schedule.run_pending()
         time.sleep(60)
-
-if __name__ == '__main__':
-    subscribe_and_schedule_renewal()
