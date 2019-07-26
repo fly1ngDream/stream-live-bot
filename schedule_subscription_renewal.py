@@ -18,7 +18,10 @@ schedule.every(8).days.do(
 )
 
 if __name__ == '__main__':
-    tw_api.subscribe_for_stream_changes(streamer_username)
-    while True:
-        schedule.run_pending()
-        time.sleep(60)
+    try:
+        tw_api.subscribe_for_stream_changes(streamer_username)
+        while True:
+            schedule.run_pending()
+            time.sleep(60)
+    except KeyboardInterrupt:
+        pass
