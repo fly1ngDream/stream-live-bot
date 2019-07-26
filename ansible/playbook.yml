@@ -20,6 +20,10 @@
     shell: pip3 install pipenv
     register: pipenv
     changed_when: "'installed pipenv' in pipenv.stdout"
+  - name: Install pm2
+    tags: python
+    become: yes
+    shell: npm install -g pm2
   - name: Clone repo
     tags: deploy
     git:
@@ -37,18 +41,28 @@
     register: kill_gunicorn
     changed_when: kill_gunicorn.rc == 0
     failed_when: kill_gunicorn.rc not in [0, 1]
-  - name: Run stream status checker
+  - name: Run gunicorn
     tags: deploy
     shell: pipenv run gunicorn -D -b 0.0.0.0:8000 stream_status:app
     args:
       chdir: ~/{{ project_name }}
+  - name: Kill schedule_subscription_renewal process
+    shell: pm2 stop schedule_subscription_renewal
+    register: kill_subs_renewal
+    changed_when: kill_subs_renewal.rc == 0
+    failed_when: kill_subs_renewal.rc not in [0, 1]
   - name: Subcribe and schedule subscription renewal
     tags: deploy
-    shell: pipenv run gunicorn -D -b 0.0.0.0:8001 schedule_subscription_renewal:app
+    shell: pipenv run pm2 start schedule_subscription_renewal.py
     args:
       chdir: ~/{{ project_name }}
+  - name: Kill telegram bot
+    shell: pm2 stop bot
+    register: bot
+    changed_when: bot.rc == 0
+    failed_when: bot.rc not in [0, 1]
   - name: Run telegram bot
     tags: deploy
-    shell: pipenv run gunicorn -D -b 0.0.0.0:8002 bot:app
+    shell: pipenv run pm2 start bot.py
     args:
       chdir: ~/{{ project_name }}
