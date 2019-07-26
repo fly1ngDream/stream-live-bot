@@ -37,24 +37,18 @@
     register: kill_gunicorn
     changed_when: kill_gunicorn.rc == 0
     failed_when: kill_gunicorn.rc not in [0, 1]
-  - name: Run gunicorn
+  - name: Run stream status checker
     tags: deploy
-    shell: pipenv run gunicorn -D -b 0.0.0.0 -p 8000 stream_status:app
+    shell: pipenv run gunicorn -D -b 0.0.0.0:8000 stream_status:app
     args:
       chdir: ~/{{ project_name }}
   - name: Subcribe and schedule subscription renewal
     tags: deploy
-    shell: pipenv run nohup python schedule_subscription_renewal.py &
+    shell: pipenv run gunicorn -D -b 0.0.0.0:8001 schedule_subscription_renewal:app
     args:
       chdir: ~/{{ project_name }}
-  # - name: Kill running telegram bot
-  #   tags: deploy
-  #   shell: pkill python
-  #   register: kill_tg_bot
-  #   changed_when: kill_tg_bot.rc == 0
-  #   failed_when: kill_tg_bot.rc not in [0, 1]
   - name: Run telegram bot
     tags: deploy
-    shell: pipenv run nohup python bot.py &
+    shell: pipenv run gunicorn -D -b 0.0.0.0:8002 bot:app
     args:
       chdir: ~/{{ project_name }}

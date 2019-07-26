@@ -4,6 +4,7 @@ from telegram.ext.dispatcher import run_async
 from telegram.error import Unauthorized
 from dotenv import load_dotenv
 from datetime import datetime
+from twitch_api import TwitchAPI
 
 import json
 import requests
@@ -16,7 +17,9 @@ app = Flask(__name__)
 
 streamer_username = os.getenv('STREAMER_USERNAME')
 
-stream_online = False
+tw_api = TwitchAPI(os.getenv('TWITCH_CLIENT_ID'))
+
+stream_online = tw_api.is_stream_online(streamer_username)
 
 def twitch_user_link(username):
     return f'twitch.tv/{username}'
@@ -54,44 +57,5 @@ def send_notifications(subscribers, text):
         except Unauthorized as e:
             pass
 
-
-class UsernameError(Exception):
-    pass
-
-def subscribe_for_stream_changes(username):
-    api_url = 'https://api.twitch.tv/helix'
-    headers = {
-        'Client-ID': os.getenv('TWITCH_CLIENT_ID'),
-    }
-
-    users_url = f'{api_url}/users?login={username}'
-    user_data = json.loads(
-        requests.get(
-            users_url,
-            headers=headers
-        ).text
-    ).get('data')[0]
-    user_id = -1
-    if user_data == []:
-        raise UsernameError('Invalid username')
-    else:
-        user_id = int(user_data.get('id'))
-
-
-    webhooks_hub_url = f'{api_url}/webhooks/hub'
-    ip = os.getenv('IP')
-    hub_data = {
-        'hub.callback': f'http://{ip}:8000/stream_changed',
-        'hub.mode': 'subscribe',
-        'hub.topic': f'{api_url}/streams?user_id={user_id}',
-        'hub.lease_seconds': 864000,
-    }
-    requests.post(
-        webhooks_hub_url,
-        json=hub_data,
-        headers=headers,
-    )
-
 if __name__ == '__main__':
-    subscribe_for_stream_changes(os.getenv('STREAMER_USERNAME'))
     app.run(host='0.0.0.0', port=8000)

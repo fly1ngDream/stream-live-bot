@@ -12,6 +12,7 @@ flask = "*"
 requests = "*"
 gunicorn = "*"
 schedule = "*"
+class-utils = "*"
 
 [requires]
 python_version = "3.7"

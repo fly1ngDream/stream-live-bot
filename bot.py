@@ -89,5 +89,8 @@ def start_bot():
     print('* Starting bot app...')
     print(subscribers)
 
+# Gunciorn app object
+app = start_bot
+
 if __name__ == '__main__':
     start_bot()
