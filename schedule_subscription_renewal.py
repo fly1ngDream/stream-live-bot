@@ -17,11 +17,15 @@ schedule.every(8).days.do(
     streamer_username
 )
 
+def sleep(seconds):
+    for i in range(seconds):
+        try:
+            time.sleep(1)
+        except KeyboardInterrupt:
+            continue
+
 if __name__ == '__main__':
-    try:
-        tw_api.subscribe_for_stream_changes(streamer_username)
-        while True:
-            schedule.run_pending()
-            time.sleep(60)
-    except KeyboardInterrupt:
-        pass
+    tw_api.subscribe_for_stream_changes(streamer_username)
+    while True:
+        schedule.run_pending()
+        sleep(60)
