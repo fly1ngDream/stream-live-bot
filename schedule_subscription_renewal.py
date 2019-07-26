@@ -10,7 +10,7 @@ load_dotenv()
 
 streamer_username = os.getenv('STREAMER_USERNAME')
 
-tw_api = TwitchAPI(os.get_env('TWITCH_CLIENT_ID'))
+tw_api = TwitchAPI(os.getenv('TWITCH_CLIENT_ID'))
 
 schedule.every(8).days.do(
     tw_api.subscribe_for_stream_changes,
