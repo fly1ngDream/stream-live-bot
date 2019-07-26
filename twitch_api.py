@@ -85,8 +85,10 @@ class TwitchAPI(DefaultRepresentationMixin):
             'hub.topic': f'{self.url}/streams?user_id={user_id}',
             'hub.lease_seconds': 864000,
         }
+        print('Subscribing for stream updates...')
         requests.post(
             webhooks_hub_url,
             json=hub_data,
             headers=headers,
         )
+        print('Subscribed')
