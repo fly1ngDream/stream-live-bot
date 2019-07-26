@@ -50,7 +50,7 @@ def start(update, context):
     if not chat_id in subscribers:
         subscribers.append(chat_id)
         write_subscribers(subscribers, 'subscribers_data.pkl')
-        print(subscribers)
+        print(f'"{chat_id}" subscribed')
         context.bot.send_message(
             chat_id=chat_id,
             text='You\'ve subscribed for stream notifications.',
@@ -67,7 +67,7 @@ def stop(update, context):
     if chat_id in subscribers:
         subscribers.remove(chat_id)
         write_subscribers(subscribers, 'subscribers_data.pkl')
-        print(subscribers)
+        print(f'"{chat_id}" unsubscribed')
         context.bot.send_message(
             chat_id=chat_id,
             text='You\'ve unsubscribed.',
@@ -87,7 +87,7 @@ dispatcher.add_handler(stop_handler)
 def start_bot():
     updater.start_polling()
     print('* Starting bot app...')
-    print(subscribers)
+    print(f'Subscribers count: {len(subscribers)}')
 
 if __name__ == '__main__':
     start_bot()
